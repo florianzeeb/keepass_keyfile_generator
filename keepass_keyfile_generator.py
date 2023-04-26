@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 # KeePass KeyFile Generator
+# Author: Florian Zeeb
+# License: MIT
+# Version: 1.1 @ 2023-04-26
 # Version: 1.0 @ 2021-11-17
 # Source: https://github.com/florianzeeb/keepass_keyfile_generator/
 
@@ -11,6 +14,7 @@ import time
 import datetime
 import math
 import secrets
+import hashlib
 from win32_setctime import setctime #pip install win32-setctime
 
 # define max keyfiles
@@ -45,7 +49,6 @@ for x in range(0, run_numbers):
     source_template_output = source_template
 
     # define random files
-    secret_1 = secrets.token_hex(4).upper()
     secret_2 = secrets.token_hex(4).upper()
     secret_3 = secrets.token_hex(4).upper()
     secret_4 = secrets.token_hex(4).upper()
@@ -55,7 +58,11 @@ for x in range(0, run_numbers):
     secret_8 = secrets.token_hex(4).upper()
     secret_9 = secrets.token_hex(4).upper()
 
-    # replace keys template with secrets
+    # create hash of created keys
+    keys_to_hash = secret_2 + secret_3 + secret_4 + secret_5 + secret_6 + secret_7 + secret_8 + secret_9
+    secret_1 = hashlib.sha256(bytes.fromhex(keys_to_hash)).hexdigest()[:8].upper()
+
+    # replace key template with secrets
     source_template_output = source_template_output.replace('#KEY01##', secret_1)
     source_template_output = source_template_output.replace('#KEY02##', secret_2)
     source_template_output = source_template_output.replace('#KEY03##', secret_3)
